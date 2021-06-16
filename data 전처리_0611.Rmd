@@ -1,0 +1,202 @@
+```{r}
+library(tidyverse)
+library(readxl)
+
+destdir <- "download/"
+filenames <- dir(path = destdir, pattern = "*.xlsx")
+full_filenames <- paste0(destdir, "/", filenames)
+sapply(full_filenames, file.remove)
+```
+
+```{r}
+ids <- c("hayleykim97", 
+         "th-kim310",
+         "Lelp27",
+         "aputron",
+         "gpemelianov",
+         "yoo-bh",
+         "seokjin-oh",
+         "treebird19",
+         "jinjulee119"
+         )
+destdir <- "download/"
+
+igem_team_cols <- c("id", "team_name", "project", "year", "wiki")
+igem_part_cols <- c("id", "BBid", "type", "link", "backbone", "device_id", "team_id", "user")
+igem_device_cols <- c("id", "device_name", "part_combination")
+igem_obs_cols <- c("id", "strain", "indc", "conc", "concunit", "value", "valunit", "incubhr", "incubtemp", "device_id", "link")
+```
+
+```{r}
+for(i in 1:length(ids)){
+  url <-  paste0("https://github.com/", ids[i], "/", "researcheweb", "/raw/main/", destdir, "partdb.xlsx")
+  destfile <- paste0(destdir, ids[i], "_partdb.xlsx")
+  tempfile <- paste0(destdir, "temp_", ids[i], "_partdb.xlsx")
+  
+  
+  ## check the rules 
+  ## ===============================================
+  flag <- TRUE
+  try(download.file(url, tempfile, quiet = TRUE), silent=TRUE)
+  #tryCatch(download.file(url, tempfile, quiet = TRUE), error=function(e){})
+  if(!file.exists(tempfile)){
+    print(paste0(i, " ID:", ids[i], " No excel file\n"))
+    flush.console()
+  }else{
+    tmp <- read_excel(tempfile, sheet = 1, skip = 0, col_names = T)
+    igem_cols <- igem_team_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], " check column names in the igem_team sheet"))
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_team sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    tmp <- read_excel(tempfile, sheet = 2, skip = 0, col_names = T)
+    igem_cols <- igem_part_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], " check column names in the igem_part sheet"))
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_part sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    tmp <- read_excel(tempfile, sheet = 3, skip = 0, col_names = T)
+    igem_cols <- igem_device_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], " check column names in the igem_device sheet"))
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_device sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    tmp <- read_excel(tempfile, sheet = 4, skip = 0, col_names = T)
+    igem_cols <- igem_obs_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        cat(i, ids[i], " check column names in the igem_obs sheet\n")
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_obs sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    if(flag){
+      try(download.file(url, destfile, quiet = TRUE))
+      cat(i, ids[i], " ........... OK\n");flush.console()
+    }
+    file.remove(tempfile)
+  }
+  
+  
+  ## ===============================================
+  cat("\n");flush.console()
+  
+  
+}
+```
+
+```{r}
+library(magrittr)
+
+## 다운로드 받은 엑셀 파일들 
+filenames <- dir(path = destdir, pattern = "*_partdb.xlsx")
+
+
+tmp1 <- list()
+tmp2 <- list()
+tmp3 <- list()
+tmp4 <- list()
+
+for(i in 1:length(filenames)) {
+  destfile <- paste0(destdir, filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 1, skip = 0, col_names = T)
+  ## convert all data classes to character at one go
+  ## requires magrittr package
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp1[[i]] <- tmp
+  
+  tmp <- read_excel(destfile, sheet = 2, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp2[[i]] <- tmp
+  
+  tmp <- read_excel(destfile, sheet = 3, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp3[[i]] <- tmp
+  
+  tmp <- read_excel(destfile, sheet = 4, skip = 0, col_names = T) 
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp4[[i]] <- tmp
+  
+}
+
+igem_team <- do.call(bind_rows, tmp1)
+igem_part <- do.call(bind_rows, tmp2)
+igem_device <- do.call(bind_rows, tmp3)
+igem_obs <- do.call(bind_rows, tmp4)
+```
+
+```{r}
+library(magrittr)
+
+## 다운로드 받은 엑셀 파일들 
+filenames <- dir(path = destdir, pattern = "*_partdb.xlsx")
+
+
+tmp1 <- list()
+tmp2 <- list()
+tmp3 <- list()
+tmp4 <- list()
+tmp5 <- list()
+tmp6 <- list()
+tmp7 <- list()
+
+for(i in 1:length(filenames)) {
+  destfile <- paste0(destdir, filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 1, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  ## add filename
+  tmp1[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 2, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp2[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 3, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp3[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 4, skip = 0, col_names = T) 
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp4[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+   
+  
+}
+
+igem_team <- do.call(bind_rows, tmp1)
+igem_part <- do.call(bind_rows, tmp2)
+igem_device <- do.call(bind_rows, tmp3)
+igem_obs <- do.call(bind_rows, tmp4)
+```
+
