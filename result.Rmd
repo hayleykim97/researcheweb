@@ -2,12 +2,275 @@
 title: "Results"
 ---
 
-# Result 1
+#Final Result 
+#기존 download 디렉토리 파일 제거 
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+destdir <- "download/"
+filenames <- dir(path = destdir, pattern = "*.xlsx")
+full_filenames <- paste0(destdir, "/", filenames)
+sapply(full_filenames, file.remove)
+```
+
+#변수 설정
+```{r}
+ids <- c("hayleykim97", 
+         "th-kim310",
+         "Lelp27",
+         "aputron",
+         "gpemelianov",
+         "yoo-bh",
+         "seokjin-oh",
+         "treebird19",
+         "jinjulee119"
+         )
+destdir <- "download/"
+
+igem_team_cols <- c("id", "team_name", "project", "year", "wiki")
+igem_part_cols <- c("id", "BBid", "type", "link", "backbone", "device_id", "team_id", "user")
+igem_device_cols <- c("id", "device_name", "part_combination")
+igem_obs_cols <- c("id", "strain", "indc", "conc", "concunit", "value", "valunit", "incubhr", "incubtemp", "device_id", "link")
+```
+
+#엑셀파일 일괄 다운로드 
+```{r}
+for(i in 1:length(ids)){
+  url <-  paste0("https://github.com/", ids[i], "/", "researcheweb", "/raw/main/", destdir, "partdb.xlsx")
+  destfile <- paste0(destdir, ids[i], "_partdb.xlsx")
+  tempfile <- paste0(destdir, "temp_", ids[i], "_partdb.xlsx")
+
+  
+  ## check the rules 
+  ## ===============================================
+  flag <- TRUE
+  try(download.file(url, tempfile, quiet = TRUE), silent=TRUE)
+  #tryCatch(download.file(url, tempfile, quiet = TRUE), error=function(e){})
+  if(!file.exists(tempfile)){
+    print(paste0(i, " ID:", ids[i], " No excel file\n"))
+    flush.console()
+  }else{
+    tmp <- read_excel(tempfile, sheet = 1, skip = 0, col_names = T)
+    igem_cols <- igem_team_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], " check column names in the igem_team sheet"))
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_team sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    tmp <- read_excel(tempfile, sheet = 2, skip = 0, col_names = T)
+    igem_cols <- igem_part_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], " check column names in the igem_part sheet"))
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_part sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    tmp <- read_excel(tempfile, sheet = 3, skip = 0, col_names = T)
+    igem_cols <- igem_device_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], " check column names in the igem_device sheet"))
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_device sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    tmp <- read_excel(tempfile, sheet = 4, skip = 0, col_names = T)
+    igem_cols <- igem_obs_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        cat(i, ids[i], " check column names in the igem_obs sheet\n")
+        flush.console()
+        flag <- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], " check the number of columns in the igem_obs sheet"))
+      flush.console()
+      flag <- FALSE
+    }
+    
+    if(flag){
+      try(download.file(url, destfile, quiet = TRUE))
+      cat(i, ids[i], " ........... OK\n");flush.console()
+    }
+    file.remove(tempfile)
+  }
+  
+  
+  ## ===============================================
+  cat("\n");flush.console()
+  
+  
+}
+```
+
+#테이블 통합 
+ 최종 데이터 병합 전 엑셀파일 이름을 사용자 id를 더하여 모든 데이터에 추가 후 데이터 병합 
+```{r}
+library(magrittr)
+
+## 다운로드 받은 엑셀 파일들 
+filenames <- dir(path = destdir, pattern = "*_partdb.xlsx")
 
 
-fgghj
+tmp1 <- list()
+tmp2 <- list()
+tmp3 <- list()
+tmp4 <- list()
+tmp5 <- list()
+tmp6 <- list()
+tmp7 <- list()
 
-# Result 2
+for(i in 1:length(filenames)) {
+  destfile <- paste0(destdir, filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 1, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  ## add filename
+  tmp1[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 2, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp2[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 3, skip = 0, col_names = T)
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp3[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+  tmp <- read_excel(destfile, sheet = 4, skip = 0, col_names = T) 
+  tmp %<>% mutate(across(!where(is.character), as.character)) 
+  tmp4[[i]] <- tmp %>% mutate(filename=filenames[i])
+  
+   
+  
+}
+
+igem_team <- do.call(bind_rows, tmp1)
+igem_part <- do.call(bind_rows, tmp2)
+igem_device <- do.call(bind_rows, tmp3)
+igem_obs <- do.call(bind_rows, tmp4)
+```
+
+#데이터 분석을 위한 전처리 
+igem_part와 igem_team 테이블 병합 
+id와 file name 변수 두개 동시에 사용 
+
+```{r}
+
+library(tidyverse)
+
+## new id 
+tmpdat <- igem_part %>% 
+  left_join(igem_team, by=c("team_id"="id", "filename"="filename"))
+
+tmpdat %>% str
+```
+
+필요한 변수만 선택하는 코드 추가 
+필요한 변수는 분석 목적에 따라 다를 수 있음
+```{r}
+tmpdat <- igem_part %>% 
+  full_join(igem_team, by=c("team_id"="id", "filename"="filename")) %>% 
+  select(id, BBid, type, backbone, device_id, user, filename, team_name, year) %>% 
+  drop_na()
+
+tmpdat %>% str
+```
 
 
-relsut 
+관심있는 부품이 사용된 디바이스를 찾고 해당 디바이스 관측 데이터를 수집 
+```{r}
+tmpdat2 <- igem_obs %>% 
+  full_join(igem_device, by=c("device_id"="id", "filename"="filename")) %>% 
+  drop_na()
+
+
+tmpdat2 %>%  str
+```
+
+관심있는 part가 사용된 device와 관측값을 찾기 위한 데이터 처리 수행 
+```{r}
+tmpdat %>% 
+  filter(BBid=="BBa_R0040")
+```
+
+
+```{r}
+finaldat <-tmpdat2 %>% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
+  filter(unlist(lapply(partcomb, function(x){5 %in% x})) & filename=="hayleykim97_partdb.xlsx")
+
+finaldat %>% str
+```
+
+```{r}
+finaldat <-tmpdat2 %>% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
+  filter(unlist(lapply(partcomb, function(x){14 %in% x})) & filename=="hayleykim97_partdb.xlsx")
+
+finaldat %>% str
+```
+
+```{r}
+finaldat <-tmpdat2 %>% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
+  filter(unlist(lapply(partcomb, function(x){23 %in% x})) & filename=="hayleykim97_partdb.xlsx")
+
+finaldat %>% str
+```
+
+```{r}
+finaldat <-tmpdat2 %>% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
+  filter(unlist(lapply(partcomb, function(x){28 %in% x})) & filename=="hayleykim97_partdb.xlsx")
+
+finaldat %>% str
+```
+
+```{r}
+finaldat <-tmpdat2 %>% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
+  filter(unlist(lapply(partcomb, function(x){10 %in% x})) & filename=="jinjulee119_partdb.xlsx")
+
+finaldat %>% str
+```
+
+#그래프 그리는데 필요한 변수 추출 후 정리 
+```{r}
+plotdat <- finaldat %>% 
+  select(-c(id, link, filename, part_combination, partcomb)) %>% 
+  mutate(value = as.numeric(value))
+
+plotdat %>% str
+```
+
+#bar graph를 그리는 코드 추가 
+균주, inducer, inducer 농도별로 평균을 계산 후 그래프 작성 
+```{r}
+datasummary <- plotdat %>% 
+  group_by(indc, conc) %>% 
+  summarise(mean=mean(value), n=n()) 
+
+ggplot(datasummary, aes(x=conc, y=mean)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
