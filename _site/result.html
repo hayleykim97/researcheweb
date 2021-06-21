@@ -242,10 +242,13 @@ $(document).ready(function () {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">Introduction</a>
 </li>
 <li>
   <a href="about.html">About</a>
+</li>
+<li>
+  <a href="method.html">Method</a>
 </li>
 <li>
   <a href="result.html">Result</a>
@@ -267,7 +270,9 @@ $(document).ready(function () {
 </div>
 
 
-<p>#Final Result #기존 download 디렉토리 파일 제거</p>
+<ol style="list-style-type: decimal">
+<li>기존 download 디렉토리 파일 제거</li>
+</ol>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
 <pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
@@ -283,15 +288,17 @@ destdir &lt;- &quot;download/&quot;
 filenames &lt;- dir(path = destdir, pattern = &quot;*.xlsx&quot;)
 full_filenames &lt;- paste0(destdir, &quot;/&quot;, filenames)
 sapply(full_filenames, file.remove)</code></pre>
-<pre><code>##         download//aputron_partdb.xlsx     download//gpemelianov_partdb.xlsx 
-##                                  TRUE                                  TRUE 
-##     download//hayleykim97_partdb.xlsx     download//jinjulee119_partdb.xlsx 
-##                                  TRUE                                  TRUE 
-##          download//Lelp27_partdb.xlsx      download//seokjin-oh_partdb.xlsx 
-##                                  TRUE                                  TRUE 
-## download//temp_treebird19_partdb.xlsx      download//treebird19_partdb.xlsx 
-##                                  TRUE                                  TRUE</code></pre>
-<p>#변수 설정</p>
+<pre><code>##     download//aputron_partdb.xlsx download//gpemelianov_partdb.xlsx 
+##                              TRUE                              TRUE 
+## download//hayleykim97_partdb.xlsx download//jinjulee119_partdb.xlsx 
+##                              TRUE                              TRUE 
+##      download//Lelp27_partdb.xlsx  download//seokjin-oh_partdb.xlsx 
+##                              TRUE                              TRUE 
+##  download//treebird19_partdb.xlsx 
+##                              TRUE</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>변수 설정</li>
+</ol>
 <pre class="r"><code>ids &lt;- c(&quot;hayleykim97&quot;, 
          &quot;th-kim310&quot;,
          &quot;Lelp27&quot;,
@@ -308,7 +315,9 @@ igem_team_cols &lt;- c(&quot;id&quot;, &quot;team_name&quot;, &quot;project&quot
 igem_part_cols &lt;- c(&quot;id&quot;, &quot;BBid&quot;, &quot;type&quot;, &quot;link&quot;, &quot;backbone&quot;, &quot;device_id&quot;, &quot;team_id&quot;, &quot;user&quot;)
 igem_device_cols &lt;- c(&quot;id&quot;, &quot;device_name&quot;, &quot;part_combination&quot;)
 igem_obs_cols &lt;- c(&quot;id&quot;, &quot;strain&quot;, &quot;indc&quot;, &quot;conc&quot;, &quot;concunit&quot;, &quot;value&quot;, &quot;valunit&quot;, &quot;incubhr&quot;, &quot;incubtemp&quot;, &quot;device_id&quot;, &quot;link&quot;)</code></pre>
-<p>#엑셀파일 일괄 다운로드</p>
+<ol start="3" style="list-style-type: decimal">
+<li>엑셀파일 일괄 다운로드</li>
+</ol>
 <pre class="r"><code>for(i in 1:length(ids)){
   url &lt;-  paste0(&quot;https://github.com/&quot;, ids[i], &quot;/&quot;, &quot;researcheweb&quot;, &quot;/raw/main/&quot;, destdir, &quot;partdb.xlsx&quot;)
   destfile &lt;- paste0(destdir, ids[i], &quot;_partdb.xlsx&quot;)
@@ -415,7 +424,9 @@ igem_obs_cols &lt;- c(&quot;id&quot;, &quot;strain&quot;, &quot;indc&quot;, &quo
 ## 8 treebird19  ........... OK
 ## 
 ## 9 jinjulee119  ........... OK</code></pre>
-<p>#테이블 통합 최종 데이터 병합 전 엑셀파일 이름을 사용자 id를 더하여 모든 데이터에 추가 후 데이터 병합</p>
+<ol start="4" style="list-style-type: decimal">
+<li>테이블 통합 최종 데이터 병합 전 엑셀파일 이름을 사용자 id를 더하여 모든 데이터에 추가 후 데이터 병합</li>
+</ol>
 <pre class="r"><code>library(magrittr)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;magrittr&#39;</code></pre>
@@ -465,7 +476,9 @@ igem_team &lt;- do.call(bind_rows, tmp1)
 igem_part &lt;- do.call(bind_rows, tmp2)
 igem_device &lt;- do.call(bind_rows, tmp3)
 igem_obs &lt;- do.call(bind_rows, tmp4)</code></pre>
-<p>#데이터 분석을 위한 전처리 igem_part와 igem_team 테이블 병합 id와 file name 변수 두개 동시에 사용</p>
+<ol start="5" style="list-style-type: decimal">
+<li>데이터 분석을 위한 전처리 igem_part와 igem_team 테이블 병합 id와 file name 변수 두개 동시에 사용</li>
+</ol>
 <pre class="r"><code>library(tidyverse)
 
 ## new id 
@@ -487,7 +500,9 @@ tmpdat %&gt;% str</code></pre>
 ##  $ project  : chr [1:53] &quot;PaDetector, a household device for HPV preliminary screening&quot; &quot;PaDetector, a household device for HPV preliminary screening&quot; &quot;PaDetector, a household device for HPV preliminary screening&quot; &quot;OperationCRISPR&quot; ...
 ##  $ year     : chr [1:53] &quot;2019&quot; &quot;2019&quot; &quot;2019&quot; &quot;2013&quot; ...
 ##  $ wiki     : chr [1:53] &quot;https://2019.igem.org/Team:ZJU-China&quot; &quot;https://2019.igem.org/Team:ZJU-China&quot; &quot;https://2019.igem.org/Team:ZJU-China&quot; &quot;http://2013.igem.org/Team:UCSF&quot; ...</code></pre>
-<p>필요한 변수만 선택하는 코드 추가 필요한 변수는 분석 목적에 따라 다를 수 있음</p>
+<ol start="6" style="list-style-type: decimal">
+<li>필요한 변수만 선택하는 코드 추가 필요한 변수는 분석 목적에 따라 다를 수 있음</li>
+</ol>
 <pre class="r"><code>tmpdat &lt;- igem_part %&gt;% 
   full_join(igem_team, by=c(&quot;team_id&quot;=&quot;id&quot;, &quot;filename&quot;=&quot;filename&quot;)) %&gt;% 
   select(id, BBid, type, backbone, device_id, user, filename, team_name, year) %&gt;% 
@@ -504,7 +519,9 @@ tmpdat %&gt;% str</code></pre>
 ##  $ filename : chr [1:48] &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; ...
 ##  $ team_name: chr [1:48] &quot;ZJU-China&quot; &quot;ZJU-China&quot; &quot;ZJU-China&quot; &quot;UCSF&quot; ...
 ##  $ year     : chr [1:48] &quot;2019&quot; &quot;2019&quot; &quot;2019&quot; &quot;2013&quot; ...</code></pre>
-<p>관심있는 부품이 사용된 디바이스를 찾고 해당 디바이스 관측 데이터를 수집</p>
+<ol start="7" style="list-style-type: decimal">
+<li>관심있는 부품이 사용된 디바이스를 찾고 해당 디바이스 관측 데이터를 수집</li>
+</ol>
 <pre class="r"><code>tmpdat2 &lt;- igem_obs %&gt;% 
   full_join(igem_device, by=c(&quot;device_id&quot;=&quot;id&quot;, &quot;filename&quot;=&quot;filename&quot;)) %&gt;% 
   drop_na()
@@ -526,13 +543,16 @@ tmpdat2 %&gt;%  str</code></pre>
 ##  $ filename        : chr [1:44] &quot;gpemelianov_partdb.xlsx&quot; &quot;gpemelianov_partdb.xlsx&quot; &quot;gpemelianov_partdb.xlsx&quot; &quot;gpemelianov_partdb.xlsx&quot; ...
 ##  $ device_name     : chr [1:44] &quot;D0001&quot; &quot;D0001&quot; &quot;D0001&quot; &quot;D0002&quot; ...
 ##  $ part_combination: chr [1:44] &quot;1,2,3,4&quot; &quot;1,2,3,4&quot; &quot;1,2,3,4&quot; &quot;5,6&quot; ...</code></pre>
-<p>관심있는 part가 사용된 device와 관측값을 찾기 위한 데이터 처리 수행</p>
+<ol start="8" style="list-style-type: decimal">
+<li>관심있는 part가 사용된 device와 관측값을 찾기 위한 데이터 처리 수행</li>
+</ol>
 <pre class="r"><code>tmpdat %&gt;% 
   filter(BBid==&quot;BBa_R0040&quot;)</code></pre>
 <pre><code>## # A tibble: 1 x 9
 ##   id    BBid    type    backbone device_id user    filename      team_name year 
 ##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;
 ## 1 10    BBa_R0… promot… PSB3C5   3         JinjuL… jinjulee119_… Fudan     2019</code></pre>
+<p>8-1. 수집</p>
 <pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
   filter(unlist(lapply(partcomb, function(x){5 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
@@ -554,6 +574,7 @@ finaldat %&gt;% str</code></pre>
 ##  $ device_name     : chr(0) 
 ##  $ part_combination: chr(0) 
 ##  $ partcomb        : list()</code></pre>
+<p>8-2. 수집</p>
 <pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
   filter(unlist(lapply(partcomb, function(x){14 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
@@ -575,6 +596,7 @@ finaldat %&gt;% str</code></pre>
 ##  $ device_name     : chr(0) 
 ##  $ part_combination: chr(0) 
 ##  $ partcomb        : list()</code></pre>
+<p>8-3. 수집</p>
 <pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
   filter(unlist(lapply(partcomb, function(x){23 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
@@ -596,6 +618,7 @@ finaldat %&gt;% str</code></pre>
 ##  $ device_name     : chr(0) 
 ##  $ part_combination: chr(0) 
 ##  $ partcomb        : list()</code></pre>
+<p>8-4. 수집</p>
 <pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
   filter(unlist(lapply(partcomb, function(x){28 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
@@ -617,6 +640,7 @@ finaldat %&gt;% str</code></pre>
 ##  $ device_name     : chr(0) 
 ##  $ part_combination: chr(0) 
 ##  $ partcomb        : list()</code></pre>
+<p>8-5. 수집</p>
 <pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
   filter(unlist(lapply(partcomb, function(x){10 %in% x})) &amp; filename==&quot;jinjulee119_partdb.xlsx&quot;)
@@ -642,7 +666,9 @@ finaldat %&gt;% str</code></pre>
 ##   ..$ : num [1:4] 10 11 12 13
 ##   ..$ : num [1:4] 10 11 12 13
 ##   ..$ : num [1:4] 10 11 12 13</code></pre>
-<p>#그래프 그리는데 필요한 변수 추출 후 정리</p>
+<ol start="9" style="list-style-type: decimal">
+<li>그래프 그리는데 필요한 변수 추출 후 정리</li>
+</ol>
 <pre class="r"><code>plotdat &lt;- finaldat %&gt;% 
   select(-c(id, link, filename, part_combination, partcomb)) %&gt;% 
   mutate(value = as.numeric(value))
@@ -659,7 +685,9 @@ plotdat %&gt;% str</code></pre>
 ##  $ incubtemp  : chr [1:4] &quot;37&quot; &quot;37&quot; &quot;37&quot; &quot;37&quot;
 ##  $ device_id  : chr [1:4] &quot;3&quot; &quot;3&quot; &quot;3&quot; &quot;3&quot;
 ##  $ device_name: chr [1:4] &quot;D0003&quot; &quot;D0003&quot; &quot;D0003&quot; &quot;D0003&quot;</code></pre>
-<p>#bar graph를 그리는 코드 추가 균주, inducer, inducer 농도별로 평균을 계산 후 그래프 작성</p>
+<ol start="10" style="list-style-type: decimal">
+<li>bar graph를 그리는 코드 추가 균주, inducer, inducer 농도별로 평균을 계산 후 그래프 작성</li>
+</ol>
 <pre class="r"><code>datasummary &lt;- plotdat %&gt;% 
   group_by(indc, conc) %&gt;% 
   summarise(mean=mean(value), n=n()) </code></pre>

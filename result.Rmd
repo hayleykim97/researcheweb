@@ -2,8 +2,8 @@
 title: "Results"
 ---
 
-#Final Result 
-#기존 download 디렉토리 파일 제거 
+ 
+1. 기존 download 디렉토리 파일 제거 
 
 ```{r}
 library(tidyverse)
@@ -15,7 +15,7 @@ full_filenames <- paste0(destdir, "/", filenames)
 sapply(full_filenames, file.remove)
 ```
 
-#변수 설정
+2. 변수 설정
 ```{r}
 ids <- c("hayleykim97", 
          "th-kim310",
@@ -35,7 +35,7 @@ igem_device_cols <- c("id", "device_name", "part_combination")
 igem_obs_cols <- c("id", "strain", "indc", "conc", "concunit", "value", "valunit", "incubhr", "incubtemp", "device_id", "link")
 ```
 
-#엑셀파일 일괄 다운로드 
+3. 엑셀파일 일괄 다운로드 
 ```{r}
 for(i in 1:length(ids)){
   url <-  paste0("https://github.com/", ids[i], "/", "researcheweb", "/raw/main/", destdir, "partdb.xlsx")
@@ -123,7 +123,7 @@ for(i in 1:length(ids)){
 }
 ```
 
-#테이블 통합 
+4. 테이블 통합 
  최종 데이터 병합 전 엑셀파일 이름을 사용자 id를 더하여 모든 데이터에 추가 후 데이터 병합 
 ```{r}
 library(magrittr)
@@ -170,7 +170,7 @@ igem_device <- do.call(bind_rows, tmp3)
 igem_obs <- do.call(bind_rows, tmp4)
 ```
 
-#데이터 분석을 위한 전처리 
+5. 데이터 분석을 위한 전처리 
 igem_part와 igem_team 테이블 병합 
 id와 file name 변수 두개 동시에 사용 
 
@@ -185,7 +185,7 @@ tmpdat <- igem_part %>%
 tmpdat %>% str
 ```
 
-필요한 변수만 선택하는 코드 추가 
+6. 필요한 변수만 선택하는 코드 추가 
 필요한 변수는 분석 목적에 따라 다를 수 있음
 ```{r}
 tmpdat <- igem_part %>% 
@@ -197,7 +197,7 @@ tmpdat %>% str
 ```
 
 
-관심있는 부품이 사용된 디바이스를 찾고 해당 디바이스 관측 데이터를 수집 
+7. 관심있는 부품이 사용된 디바이스를 찾고 해당 디바이스 관측 데이터를 수집 
 ```{r}
 tmpdat2 <- igem_obs %>% 
   full_join(igem_device, by=c("device_id"="id", "filename"="filename")) %>% 
@@ -207,13 +207,13 @@ tmpdat2 <- igem_obs %>%
 tmpdat2 %>%  str
 ```
 
-관심있는 part가 사용된 device와 관측값을 찾기 위한 데이터 처리 수행 
+8. 관심있는 part가 사용된 device와 관측값을 찾기 위한 데이터 처리 수행 
 ```{r}
 tmpdat %>% 
   filter(BBid=="BBa_R0040")
 ```
 
-
+8-1. 수집 
 ```{r}
 finaldat <-tmpdat2 %>% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
@@ -222,6 +222,7 @@ finaldat <-tmpdat2 %>%
 finaldat %>% str
 ```
 
+8-2. 수집 
 ```{r}
 finaldat <-tmpdat2 %>% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
@@ -230,6 +231,7 @@ finaldat <-tmpdat2 %>%
 finaldat %>% str
 ```
 
+8-3. 수집 
 ```{r}
 finaldat <-tmpdat2 %>% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
@@ -238,6 +240,7 @@ finaldat <-tmpdat2 %>%
 finaldat %>% str
 ```
 
+8-4. 수집 
 ```{r}
 finaldat <-tmpdat2 %>% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
@@ -245,7 +248,7 @@ finaldat <-tmpdat2 %>%
 
 finaldat %>% str
 ```
-
+8-5. 수집 
 ```{r}
 finaldat <-tmpdat2 %>% 
   mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=","), as.numeric)) %>% 
@@ -254,7 +257,7 @@ finaldat <-tmpdat2 %>%
 finaldat %>% str
 ```
 
-#그래프 그리는데 필요한 변수 추출 후 정리 
+9. 그래프 그리는데 필요한 변수 추출 후 정리 
 ```{r}
 plotdat <- finaldat %>% 
   select(-c(id, link, filename, part_combination, partcomb)) %>% 
@@ -263,7 +266,7 @@ plotdat <- finaldat %>%
 plotdat %>% str
 ```
 
-#bar graph를 그리는 코드 추가 
+10. bar graph를 그리는 코드 추가 
 균주, inducer, inducer 농도별로 평균을 계산 후 그래프 작성 
 ```{r}
 datasummary <- plotdat %>% 

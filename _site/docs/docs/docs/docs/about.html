@@ -267,7 +267,80 @@ $(document).ready(function () {
 </div>
 
 
-<p>More about this website.</p>
+<p>#Part information</p>
+<pre class="r"><code>no &lt;-c(1)
+
+team_name &lt;-c(&quot;Georgia State&quot;)
+project_title &lt;-c(&quot;The Novel Synthesis of Factor C: A Story of Blood and Venom&quot;)
+project_year &lt;-c(2017)
+wiki_page &lt;-c(&quot;http://2017.igem.org/Team:Georgia_State&quot;)
+igem_team &lt;- data.frame(no,
+                        team_name,
+                        project_title,
+                        project_year,
+                        wiki_page)
+
+knitr::kable(igem_team)</code></pre>
+<table>
+<colgroup>
+<col width="2%" />
+<col width="10%" />
+<col width="46%" />
+<col width="10%" />
+<col width="30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">no</th>
+<th align="left">team_name</th>
+<th align="left">project_title</th>
+<th align="right">project_year</th>
+<th align="left">wiki_page</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">Georgia State</td>
+<td align="left">The Novel Synthesis of Factor C: A Story of Blood and Venom</td>
+<td align="right">2017</td>
+<td align="left"><a href="http://2017.igem.org/Team:Georgia_State" class="uri">http://2017.igem.org/Team:Georgia_State</a></td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>no &lt;-c(1)
+
+part_id &lt;-c(&quot;BBa_R0040&quot;)
+part_name &lt;-c(&quot;TetR repressible promoter&quot;)
+part_type &lt;-c(&quot;promoter&quot;)
+team_id &lt;-c(1)
+igem_part &lt;-data.frame(no,
+                       part_id,
+                       part_name,
+                       part_type,
+                       team_id)
+
+knitr::kable(igem_part)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">no</th>
+<th align="left">part_id</th>
+<th align="left">part_name</th>
+<th align="left">part_type</th>
+<th align="right">team_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">BBa_R0040</td>
+<td align="left">TetR repressible promoter</td>
+<td align="left">promoter</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
 
 
 

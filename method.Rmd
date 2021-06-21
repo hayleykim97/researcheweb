@@ -3,12 +3,10 @@ title: "Method"
 ---
 
 
-# 연구 방법
+
+## **R tool 다루기**
 
 
-## 연구 방법 1
-
-**R tool 다루기**
 
 1. Creating Git hub page
 
@@ -133,37 +131,40 @@ incubtemps (character)
 device_id (character)
 link (character)
 
-## 연구 방법 2
 
-**웹 페이지 만들기**
+
+
+## **웹 페이지 만들기**
+
+
 
 
 1. webpage를 만들기 위해서 Rproject에서 index.Rmd 파일을 만들고 다음과 같이 입력 
----
+
 title: "My ResearchE Class Website"
----
+
 
 Hello, Website!
 
 
 
-2.about.Rmd 파일을 생성하고 다음과 같이 입력
----
+2. about.Rmd 파일을 생성하고 다음과 같이 입력
+
 title: "About This Website"
----
+
 
 More about this website.
 
 
 
-3.Result.Rmd 파일을 생성하고 다음과 같이 입력 
----
+3. Result.Rmd 파일을 생성하고 다음과 같이 입력 
+
 title: "Result"
----
+
 
 Result
 
-4._site.yml 파일을 만들과 다음과 같이 입력
+4. _site.yml 파일을 만들과 다음과 같이 입력
  Rstudio > File > New File > Text File 로 만들고 저장을 _site.yml 로 하기. 
 
 name: "My ResearchE Class Website"
