@@ -1,3 +1,5 @@
+#기존 다운로드 디렉토리 파일 제거 
+
 ```{r}
 library(tidyverse)
 library(readxl)
@@ -8,6 +10,7 @@ full_filenames <- paste0(destdir, "/", filenames)
 sapply(full_filenames, file.remove)
 ```
 
+# 변수 설정 
 ```{R}
 ids <- c("hayleykim97", 
          "th-kim310",
@@ -135,6 +138,7 @@ for(i in 1:length(ids)){
 
 ```
 
+#테이블 통합 임시 
 ``` {r}
 filenames <- dir(path = destdir, pattern = "*.xlsx")
 

@@ -253,6 +253,7 @@ finaldat <-tmpdat2 %>%
 finaldat %>% str
 ```
 
+#그래프 그리는데 필요한 변수 추출 후 정리 
 ```{r}
 plotdat <- finaldat %>% 
   select(-c(id, link, filename, part_combination, partcomb)) %>% 
@@ -261,6 +262,8 @@ plotdat <- finaldat %>%
 plotdat %>% str
 ```
 
+#bar graph를 그리는 코드 추가 
+균주, inducer, inducer 농도별로 평균을 계산 후 그래프 작성 
 ```{r}
 datasummary <- plotdat %>% 
   group_by(indc, conc) %>% 
