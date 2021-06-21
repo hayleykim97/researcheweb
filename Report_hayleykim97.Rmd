@@ -4,12 +4,12 @@ subtitle: "합성생물학 재현성에 관한 연구 "
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 author: "김승화"
 output:
+  word_document:
+    toc: yes
   html_document:
     toc: yes
     number_sections: yes
     df_print: paged
-  word_document:
-    toc: yes
   output: rtf_document
   pdf_document:
     toc: yes
