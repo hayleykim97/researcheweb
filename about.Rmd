@@ -2,4 +2,36 @@
 title: "About This Website"
 ---
 
-More about this website.
+#Part information
+
+```{r}
+no <-c(1)
+
+team_name <-c("Georgia State")
+project_title <-c("The Novel Synthesis of Factor C: A Story of Blood and Venom")
+project_year <-c(2017)
+wiki_page <-c("http://2017.igem.org/Team:Georgia_State")
+igem_team <- data.frame(no,
+                        team_name,
+                        project_title,
+                        project_year,
+                        wiki_page)
+
+knitr::kable(igem_team)
+```
+
+```{r}
+no <-c(1)
+
+part_id <-c("BBa_R0040")
+part_name <-c("TetR repressible promoter")
+part_type <-c("promoter")
+team_id <-c(1)
+igem_part <-data.frame(no,
+                       part_id,
+                       part_name,
+                       part_type,
+                       team_id)
+
+knitr::kable(igem_part)
+```
