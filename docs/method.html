@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Method</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My ResearchE Class Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="method.html">Method</a>
+</li>
+<li>
+  <a href="result.html">Result</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Method</h1>
+
+</div>
+
+
+<div id="연구-방법" class="section level1">
+<h1>연구 방법</h1>
+<div id="연구-방법-1" class="section level2">
+<h2>연구 방법 1</h2>
+<p><strong>R tool 다루기</strong></p>
+<ol style="list-style-type: decimal">
+<li>Creating Git hub page</li>
+</ol>
+<p>2-1. Create a new Github repository with pages 2-2. Create a new project in R studio 2-3. Connect local project to Github repository 2-4. Github page 생성 2-5. New page 생성 2-6. 로컬, 리모트 저장소에 commit 및 push 2-7. 웹 페이지 확인</p>
+<p>3-1. page 완성 3-2. iGEM part Rmarkdown page 만들기 3-3. iGEM team table</p>
+<pre class="r"><code>no &lt;- c(1,2,3,4,5)
+
+team_name &lt;- c(&quot;GO_Paris-Saclay&quot;, &quot;BOKU-Vienna&quot;, &quot;BGU-Israel&quot;, &quot;Hannover&quot;, &quot;KAIT-Japan&quot;)
+project_title &lt;- c(&quot;HuGenesS&quot;, &quot;Phangel-Taking Phage Therapy Ahead&quot;, &quot;WIPEOUT-Wipes out wet wipes of the environment&quot;, &quot;InToSens Development of an Inflammatory Toxin Sensor for detecting implant associated inflammations&quot;,&quot;E.coli that Create a Creative Environment&quot;)
+
+project_year &lt;- c(2020,2020,2020,2020,2020)
+
+wiki_page &lt;- c(&quot;https://2020.igem.org/Team:GO_Paris-Saclay&quot;, &quot;https://2020.igem.org/Team:BOKU-Vienna&quot;, &quot;https://2020.igem.org/Team:BGU-Israelndo5a&quot;, &quot;https://2020.igem.org/Team:Hannover&quot;, &quot;https://2020.igem.org/Team:KAIT_Japan&quot;)
+
+igem_team &lt;- data.frame(no, 
+                        team_name,
+                        project_title,
+                        project_year,
+                        wiki_page)
+#knitr::kable(std, format = &quot;markdown&quot;)
+                           
+knitr::kable(igem_team)</code></pre>
+<table>
+<colgroup>
+<col width="1%" />
+<col width="9%" />
+<col width="57%" />
+<col width="7%" />
+<col width="24%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">no</th>
+<th align="left">team_name</th>
+<th align="left">project_title</th>
+<th align="right">project_year</th>
+<th align="left">wiki_page</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">GO_Paris-Saclay</td>
+<td align="left">HuGenesS</td>
+<td align="right">2020</td>
+<td align="left"><a href="https://2020.igem.org/Team:GO_Paris-Saclay" class="uri">https://2020.igem.org/Team:GO_Paris-Saclay</a></td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">BOKU-Vienna</td>
+<td align="left">Phangel-Taking Phage Therapy Ahead</td>
+<td align="right">2020</td>
+<td align="left"><a href="https://2020.igem.org/Team:BOKU-Vienna" class="uri">https://2020.igem.org/Team:BOKU-Vienna</a></td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">BGU-Israel</td>
+<td align="left">WIPEOUT-Wipes out wet wipes of the environment</td>
+<td align="right">2020</td>
+<td align="left"><a href="https://2020.igem.org/Team:BGU-Israelndo5a" class="uri">https://2020.igem.org/Team:BGU-Israelndo5a</a></td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Hannover</td>
+<td align="left">InToSens Development of an Inflammatory Toxin Sensor for detecting implant associated inflammations</td>
+<td align="right">2020</td>
+<td align="left"><a href="https://2020.igem.org/Team:Hannover" class="uri">https://2020.igem.org/Team:Hannover</a></td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">KAIT-Japan</td>
+<td align="left">E.coli that Create a Creative Environment</td>
+<td align="right">2020</td>
+<td align="left"><a href="https://2020.igem.org/Team:KAIT_Japan" class="uri">https://2020.igem.org/Team:KAIT_Japan</a></td>
+</tr>
+</tbody>
+</table>
+<p>3-4. iGEM part table</p>
+<pre class="r"><code>no&lt;- c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30)
+
+part_id &lt;- c(&quot;BBa_K2406020&quot;,&quot;BBa_B1001&quot;,&quot;   BBa_K3514001&quot;,&quot;BBa_K3514002&quot;,&quot;BBa_K3514003&quot;,&quot;BBa_B0040&quot;,&quot;BBa_K3514004&quot;,&quot;BBa_K3338000&quot;,&quot;BBa_K3338001&quot;,&quot;BBa_K3338002&quot;,&quot;BBa_K3338003&quot;,&quot;BBa_K3338004&quot;,&quot;BBa_K3338005&quot;,&quot;BBa_K3338006&quot;,&quot;BBa_K3338007&quot;,&quot;BBa_K3338008&quot;,&quot;BBa_K3338010&quot;,&quot;BBa_K3338011&quot;,&quot;BBa_K3338012&quot;,&quot;BBa_K3338013&quot;,&quot;BBa_K3338015&quot;,&quot;BBa_K3338014&quot;,&quot;BBa_K3338016&quot;,&quot;BBa_K3338017&quot;,&quot;BBa_K3338018&quot;,&quot;BBa_K3338019&quot;,&quot;BBa_K3338021&quot;,&quot;BBa_K3338022&quot;,&quot;BBa_K3338023&quot;,&quot;BBa_K3338020&quot;)
+
+part_name &lt;- c(&quot;T7-LacO Promoter&quot;,&quot;Terminator(artifical, small, %T~=90)&quot;,&quot;Protein Exo of the Lambda Red System, degrades dsDNA into ssDNA, leaves 3&#39; ends&quot;,&quot;Protein Beta of the Lambda Red System&quot;,&quot;Protein Gam of the Lambda Red System&quot;,&quot;Spacer.1 (generic)&quot;,&quot;Lambda Red System&quot;,&quot;Iron transporter MagA from Magnetospirillum magneticum&quot;,&quot;Human codon optimized Gaussia luciferase hGLuc&quot;,&quot;Synthetic promoter_2 with NF-κB and AP1 binding sites&quot;,&quot;P2A self-cleaving peptide without GSG-linker&quot;,&quot;Internal ribosome entry site (IRES) for use in eukaryotic cells&quot;,&quot;Interleukin-6 Promoter mutagenized (IL-6 Pmut)&quot;,&quot;EGFP&quot;,&quot;Synthetic promoter_1 with NF-κB and AP1 binding sites&quot;,&quot;Interleukin-6 Promoter (IL-6 P)&quot;,&quot;IL-6 P-MagA-P2A-hGLuc (Inflammatory Toxin Sensor)&quot;,&quot;CMV-EGFP-MagA-P2A-hGLuc&quot;,&quot;CMV-EGFP-MagA&quot;,&quot;CMV-EGFP-P2A-mCherry&quot;,&quot;CMV-EGFP-MagA-IRES-hGLuc&quot;,&quot;CMV-EGFP-IRES-mCherry&quot;,&quot;CMV-hGLuc-FLAG&quot;,&quot;CMV-hGLuc&quot;,&quot;CMV-MagA-FLAG&quot;,&quot;IL-6 Pmut-hGLuc&quot;,&quot;SynthP_1-hGLuc&quot;,&quot;SynthP_2-hGLuc&quot;,&quot;IL-6 Pmut-MagA-P2A-hGLuc&quot;,&quot;pEGFP-C2&quot;)
+
+part_type &lt;- c(&quot;promoter&quot;,&quot;terminator&quot;, &quot;protein&quot;,&quot;protein&quot;,&quot;protein&quot;,&quot;Spacer&quot;,&quot;Lambda system&quot;,&quot;Reporter&quot;,&quot;Reporter&quot;,&quot;Regulatory&quot;,&quot;Coding&quot;,&quot;RBS&quot;,&quot;Regulatory&quot;,&quot;Reporter&quot;,&quot;Regulatory&quot;,&quot;Regulatory&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Composite&quot;,&quot;Plasmid&quot;,&quot;Plasmid&quot;)
+
+team_id &lt;- c(2,2,2,2,2,2,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4)
+
+igem_part &lt;- data.frame(no,
+                        part_id,
+                        part_name,
+                        part_type,
+                        team_id)
+knitr::kable(igem_part)</code></pre>
+<table>
+<colgroup>
+<col width="2%" />
+<col width="11%" />
+<col width="67%" />
+<col width="11%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">no</th>
+<th align="left">part_id</th>
+<th align="left">part_name</th>
+<th align="left">part_type</th>
+<th align="right">team_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">BBa_K2406020</td>
+<td align="left">T7-LacO Promoter</td>
+<td align="left">promoter</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">BBa_B1001</td>
+<td align="left">Terminator(artifical, small, %T~=90)</td>
+<td align="left">terminator</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">BBa_K3514001</td>
+<td align="left">Protein Exo of the Lambda Red System, degrades dsDNA into ssDNA, leaves 3’ ends</td>
+<td align="left">protein</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">BBa_K3514002</td>
+<td align="left">Protein Beta of the Lambda Red System</td>
+<td align="left">protein</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">BBa_K3514003</td>
+<td align="left">Protein Gam of the Lambda Red System</td>
+<td align="left">protein</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">BBa_B0040</td>
+<td align="left">Spacer.1 (generic)</td>
+<td align="left">Spacer</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">BBa_K3514004</td>
+<td align="left">Lambda Red System</td>
+<td align="left">Lambda system</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">BBa_K3338000</td>
+<td align="left">Iron transporter MagA from Magnetospirillum magneticum</td>
+<td align="left">Reporter</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">BBa_K3338001</td>
+<td align="left">Human codon optimized Gaussia luciferase hGLuc</td>
+<td align="left">Reporter</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">BBa_K3338002</td>
+<td align="left">Synthetic promoter_2 with NF-κB and AP1 binding sites</td>
+<td align="left">Regulatory</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">BBa_K3338003</td>
+<td align="left">P2A self-cleaving peptide without GSG-linker</td>
+<td align="left">Coding</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">BBa_K3338004</td>
+<td align="left">Internal ribosome entry site (IRES) for use in eukaryotic cells</td>
+<td align="left">RBS</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="left">BBa_K3338005</td>
+<td align="left">Interleukin-6 Promoter mutagenized (IL-6 Pmut)</td>
+<td align="left">Regulatory</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="left">BBa_K3338006</td>
+<td align="left">EGFP</td>
+<td align="left">Reporter</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="left">BBa_K3338007</td>
+<td align="left">Synthetic promoter_1 with NF-κB and AP1 binding sites</td>
+<td align="left">Regulatory</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="left">BBa_K3338008</td>
+<td align="left">Interleukin-6 Promoter (IL-6 P)</td>
+<td align="left">Regulatory</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="left">BBa_K3338010</td>
+<td align="left">IL-6 P-MagA-P2A-hGLuc (Inflammatory Toxin Sensor)</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="left">BBa_K3338011</td>
+<td align="left">CMV-EGFP-MagA-P2A-hGLuc</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="left">BBa_K3338012</td>
+<td align="left">CMV-EGFP-MagA</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="left">BBa_K3338013</td>
+<td align="left">CMV-EGFP-P2A-mCherry</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">21</td>
+<td align="left">BBa_K3338015</td>
+<td align="left">CMV-EGFP-MagA-IRES-hGLuc</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">22</td>
+<td align="left">BBa_K3338014</td>
+<td align="left">CMV-EGFP-IRES-mCherry</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">23</td>
+<td align="left">BBa_K3338016</td>
+<td align="left">CMV-hGLuc-FLAG</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">24</td>
+<td align="left">BBa_K3338017</td>
+<td align="left">CMV-hGLuc</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">25</td>
+<td align="left">BBa_K3338018</td>
+<td align="left">CMV-MagA-FLAG</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">26</td>
+<td align="left">BBa_K3338019</td>
+<td align="left">IL-6 Pmut-hGLuc</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">27</td>
+<td align="left">BBa_K3338021</td>
+<td align="left">SynthP_1-hGLuc</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">28</td>
+<td align="left">BBa_K3338022</td>
+<td align="left">SynthP_2-hGLuc</td>
+<td align="left">Composite</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">29</td>
+<td align="left">BBa_K3338023</td>
+<td align="left">IL-6 Pmut-MagA-P2A-hGLuc</td>
+<td align="left">Plasmid</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="left">BBa_K3338020</td>
+<td align="left">pEGFP-C2</td>
+<td align="left">Plasmid</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<p>4.iGEM 부품 사용 사례 분석 4-1. iGEM 페이지 및 할당 프로모터</p>
+<pre class="r"><code>std_name &lt;- c(&quot;김승화&quot;, &quot;김태현&quot;,&quot;박성군&quot;,&quot;Aporva&quot;,&quot;Georgii&quot;,&quot;유병현&quot;,&quot;오석진&quot;,&quot;허성보&quot;,&quot;이진주&quot;)
+igeme.page &lt;- c(&quot;https://hayleykim97.github.io/researcheweb/&quot;,
+                 &quot;https://th-kim310.github.io/researcheweb/&quot;,
+                 &quot;https://Lelp27.github.io/researcheweb/&quot;,
+                 &quot;https://aputron.github.io/researcheweb/&quot;,
+                 &quot;https://gpemelianov.github.io/researcheweb/&quot;,
+                 &quot;https://yoo-bh.github.io/researcheweb/&quot;,
+                 &quot;https://seokjin-oh.github.io/researcheweb/&quot;,
+                 &quot;https://treebird19.github.io/researcheweb/&quot;,
+                 &quot;https://jinjulee119.github.io/researcheweb/&quot;
+                 )
+promoters &lt;- c(&quot;BBa_R0040&quot;, &quot;BBa_R0010&quot;, &quot;BBa_J23100&quot;,
+               &quot;BBa_R0011&quot;, &quot;BBa_I0500&quot;, &quot;BBa_J23101&quot;,
+               &quot;BBa_R0051&quot;, &quot;BBa_J23119&quot;, &quot;BBa_R0062&quot;)
+std &lt;- data.frame(std_name, igeme.page, promoters)
+knitr::kable(std, format = &quot;markdown&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">std_name</th>
+<th align="left">igeme.page</th>
+<th align="left">promoters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">김승화</td>
+<td align="left"><a href="https://hayleykim97.github.io/researcheweb/" class="uri">https://hayleykim97.github.io/researcheweb/</a></td>
+<td align="left">BBa_R0040</td>
+</tr>
+<tr class="even">
+<td align="left">김태현</td>
+<td align="left"><a href="https://th-kim310.github.io/researcheweb/" class="uri">https://th-kim310.github.io/researcheweb/</a></td>
+<td align="left">BBa_R0010</td>
+</tr>
+<tr class="odd">
+<td align="left">박성군</td>
+<td align="left"><a href="https://Lelp27.github.io/researcheweb/" class="uri">https://Lelp27.github.io/researcheweb/</a></td>
+<td align="left">BBa_J23100</td>
+</tr>
+<tr class="even">
+<td align="left">Aporva</td>
+<td align="left"><a href="https://aputron.github.io/researcheweb/" class="uri">https://aputron.github.io/researcheweb/</a></td>
+<td align="left">BBa_R0011</td>
+</tr>
+<tr class="odd">
+<td align="left">Georgii</td>
+<td align="left"><a href="https://gpemelianov.github.io/researcheweb/" class="uri">https://gpemelianov.github.io/researcheweb/</a></td>
+<td align="left">BBa_I0500</td>
+</tr>
+<tr class="even">
+<td align="left">유병현</td>
+<td align="left"><a href="https://yoo-bh.github.io/researcheweb/" class="uri">https://yoo-bh.github.io/researcheweb/</a></td>
+<td align="left">BBa_J23101</td>
+</tr>
+<tr class="odd">
+<td align="left">오석진</td>
+<td align="left"><a href="https://seokjin-oh.github.io/researcheweb/" class="uri">https://seokjin-oh.github.io/researcheweb/</a></td>
+<td align="left">BBa_R0051</td>
+</tr>
+<tr class="even">
+<td align="left">허성보</td>
+<td align="left"><a href="https://treebird19.github.io/researcheweb/" class="uri">https://treebird19.github.io/researcheweb/</a></td>
+<td align="left">BBa_J23119</td>
+</tr>
+<tr class="odd">
+<td align="left">이진주</td>
+<td align="left"><a href="https://jinjulee119.github.io/researcheweb/" class="uri">https://jinjulee119.github.io/researcheweb/</a></td>
+<td align="left">BBa_R0062</td>
+</tr>
+</tbody>
+</table>
+<p>4-3. create promoter.Rmd file - 해당 팀 정보 - 사용한 부품 및 회로 정보 - 회로 만드는 프로토콜 정보 - 리포터 발현 배양/실험 조건 및 측정방법</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Analysis of the promoter data</li>
+</ol>
+<ul>
+<li>igem team table</li>
+<li>igem part table</li>
+<li>igem observation table</li>
+<li>table 통합</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li><p>데이터를 csv에 쓰고 다시 읽기 기존 데이터를 쉽게 excel file로 바꿔준다.</p></li>
+<li><p>데이터 일관성 유지 (추후 데이터 변환도 함) 테이블 이름 및 데이터 타입 확인</p></li>
+</ol>
+<ul>
+<li>igem_team</li>
+</ul>
+<p>id (character) team_name (character) project (character) year (character) wiki (character)</p>
+<ul>
+<li>igem_part</li>
+</ul>
+<p>id (character) BBid (character) type (character) link (character) backbone (character) device_id (character) (v) team_name (character) user (character)</p>
+<ul>
+<li>igem_obs</li>
+</ul>
+<p>id (character) strain (character) indc (character) conc (numeric) concunit (character) value (numeric) valunit (character) incubhr (numeric) incubtemps (character) device_id (character) link (character)</p>
+</div>
+<div id="연구-방법-2" class="section level2">
+<h2>연구 방법 2</h2>
+<p><strong>웹 페이지 만들기</strong> 1. webpage를 만들기 위해서 Rproject에서 index.Rmd 파일을 만들고 다음과 같이 입력 — title: “My ResearchE Class Website” —</p>
+<p>Hello, Website!</p>
+</div>
+<div id="about.rmd-파일을-생성하고-다음과-같이-입력" class="section level2">
+<h2>2.about.Rmd 파일을 생성하고 다음과 같이 입력</h2>
+</div>
+<div id="title-about-this-website" class="section level2">
+<h2>title: “About This Website”</h2>
+<p>More about this website.</p>
+</div>
+<div id="result.rmd-파일을-생성하고-다음과-같이-입력" class="section level2">
+<h2>3.Result.Rmd 파일을 생성하고 다음과 같이 입력</h2>
+</div>
+<div id="title-result" class="section level2">
+<h2>title: “Result”</h2>
+<p>Result</p>
+<p>4._site.yml 파일을 만들과 다음과 같이 입력 Rstudio &gt; File &gt; New File &gt; Text File 로 만들고 저장을 _site.yml 로 하기.</p>
+<p>name: “My ResearchE Class Website” navbar: title: “My ResearchE Class Website” left: - text: “Home” href: index.html - text: “About” href: about.html</p>
+<ol start="5" style="list-style-type: decimal">
+<li><p>Commit in Terminal git add . git commit -m “update” git push</p></li>
+<li><p>웹 페이지 컴파일 index.Rmd 등 파일들을 knit 버튼으로 html로 컴파일을 하면 필요한 파일들이 들어감</p></li>
+<li><p>html 파일 docs 디렉토리로 복사 _site 디렉토리 이름을 docs로 바꿔준 수 git tool이나 터미널로 원격저장소에 업데이트 수행</p></li>
+</ol>
+<hr />
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

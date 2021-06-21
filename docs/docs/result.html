@@ -267,14 +267,407 @@ $(document).ready(function () {
 </div>
 
 
-<div id="result-1" class="section level1">
-<h1>Result 1</h1>
-<p>fgghj</p>
-</div>
-<div id="result-2" class="section level1">
-<h1>Result 2</h1>
-<p>relsut</p>
-</div>
+<p>#Final Result #기존 download 디렉토리 파일 제거</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.0     ✓ dplyr   1.0.5
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(readxl)
+
+destdir &lt;- &quot;download/&quot;
+filenames &lt;- dir(path = destdir, pattern = &quot;*.xlsx&quot;)
+full_filenames &lt;- paste0(destdir, &quot;/&quot;, filenames)
+sapply(full_filenames, file.remove)</code></pre>
+<pre><code>##         download//aputron_partdb.xlsx     download//gpemelianov_partdb.xlsx 
+##                                  TRUE                                  TRUE 
+##     download//hayleykim97_partdb.xlsx     download//jinjulee119_partdb.xlsx 
+##                                  TRUE                                  TRUE 
+##          download//Lelp27_partdb.xlsx      download//seokjin-oh_partdb.xlsx 
+##                                  TRUE                                  TRUE 
+## download//temp_treebird19_partdb.xlsx      download//treebird19_partdb.xlsx 
+##                                  TRUE                                  TRUE</code></pre>
+<p>#변수 설정</p>
+<pre class="r"><code>ids &lt;- c(&quot;hayleykim97&quot;, 
+         &quot;th-kim310&quot;,
+         &quot;Lelp27&quot;,
+         &quot;aputron&quot;,
+         &quot;gpemelianov&quot;,
+         &quot;yoo-bh&quot;,
+         &quot;seokjin-oh&quot;,
+         &quot;treebird19&quot;,
+         &quot;jinjulee119&quot;
+         )
+destdir &lt;- &quot;download/&quot;
+
+igem_team_cols &lt;- c(&quot;id&quot;, &quot;team_name&quot;, &quot;project&quot;, &quot;year&quot;, &quot;wiki&quot;)
+igem_part_cols &lt;- c(&quot;id&quot;, &quot;BBid&quot;, &quot;type&quot;, &quot;link&quot;, &quot;backbone&quot;, &quot;device_id&quot;, &quot;team_id&quot;, &quot;user&quot;)
+igem_device_cols &lt;- c(&quot;id&quot;, &quot;device_name&quot;, &quot;part_combination&quot;)
+igem_obs_cols &lt;- c(&quot;id&quot;, &quot;strain&quot;, &quot;indc&quot;, &quot;conc&quot;, &quot;concunit&quot;, &quot;value&quot;, &quot;valunit&quot;, &quot;incubhr&quot;, &quot;incubtemp&quot;, &quot;device_id&quot;, &quot;link&quot;)</code></pre>
+<p>#엑셀파일 일괄 다운로드</p>
+<pre class="r"><code>for(i in 1:length(ids)){
+  url &lt;-  paste0(&quot;https://github.com/&quot;, ids[i], &quot;/&quot;, &quot;researcheweb&quot;, &quot;/raw/main/&quot;, destdir, &quot;partdb.xlsx&quot;)
+  destfile &lt;- paste0(destdir, ids[i], &quot;_partdb.xlsx&quot;)
+  tempfile &lt;- paste0(destdir, &quot;temp_&quot;, ids[i], &quot;_partdb.xlsx&quot;)
+
+  
+  ## check the rules 
+  ## ===============================================
+  flag &lt;- TRUE
+  try(download.file(url, tempfile, quiet = TRUE), silent=TRUE)
+  #tryCatch(download.file(url, tempfile, quiet = TRUE), error=function(e){})
+  if(!file.exists(tempfile)){
+    print(paste0(i, &quot; ID:&quot;, ids[i], &quot; No excel file\n&quot;))
+    flush.console()
+  }else{
+    tmp &lt;- read_excel(tempfile, sheet = 1, skip = 0, col_names = T)
+    igem_cols &lt;- igem_team_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], &quot; check column names in the igem_team sheet&quot;))
+        flush.console()
+        flag &lt;- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], &quot; check the number of columns in the igem_team sheet&quot;))
+      flush.console()
+      flag &lt;- FALSE
+    }
+    
+    tmp &lt;- read_excel(tempfile, sheet = 2, skip = 0, col_names = T)
+    igem_cols &lt;- igem_part_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], &quot; check column names in the igem_part sheet&quot;))
+        flush.console()
+        flag &lt;- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], &quot; check the number of columns in the igem_part sheet&quot;))
+      flush.console()
+      flag &lt;- FALSE
+    }
+    
+    tmp &lt;- read_excel(tempfile, sheet = 3, skip = 0, col_names = T)
+    igem_cols &lt;- igem_device_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        print(paste(i, ids[i], &quot; check column names in the igem_device sheet&quot;))
+        flush.console()
+        flag &lt;- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], &quot; check the number of columns in the igem_device sheet&quot;))
+      flush.console()
+      flag &lt;- FALSE
+    }
+    
+    tmp &lt;- read_excel(tempfile, sheet = 4, skip = 0, col_names = T)
+    igem_cols &lt;- igem_obs_cols
+    if(length(names(tmp))==length(igem_cols)){
+      if(!isTRUE(all.equal(names(tmp), igem_cols))){
+        cat(i, ids[i], &quot; check column names in the igem_obs sheet\n&quot;)
+        flush.console()
+        flag &lt;- FALSE
+      }
+    }else{
+      print(paste(i, ids[i], &quot; check the number of columns in the igem_obs sheet&quot;))
+      flush.console()
+      flag &lt;- FALSE
+    }
+    
+    if(flag){
+      try(download.file(url, destfile, quiet = TRUE))
+      cat(i, ids[i], &quot; ........... OK\n&quot;);flush.console()
+    }
+    file.remove(tempfile)
+  }
+  
+  
+  ## ===============================================
+  cat(&quot;\n&quot;);flush.console()
+  
+  
+}</code></pre>
+<pre><code>## Warning in download.file(url, tempfile, quiet = TRUE): cannot open URL &#39;https://
+## github.com/hayleykim97/researcheweb/raw/main/download/partdb.xlsx&#39;: HTTP status
+## was &#39;404 Not Found&#39;</code></pre>
+<pre><code>## [1] &quot;1 ID:hayleykim97 No excel file\n&quot;</code></pre>
+<pre><code>## Warning in download.file(url, tempfile, quiet = TRUE): cannot open URL &#39;https://
+## github.com/th-kim310/researcheweb/raw/main/download/partdb.xlsx&#39;: HTTP status
+## was &#39;404 Not Found&#39;</code></pre>
+<pre><code>## [1] &quot;2 ID:th-kim310 No excel file\n&quot;
+## 
+## 3 Lelp27  ........... OK
+## 
+## 4 aputron  ........... OK
+## 
+## 5 gpemelianov  ........... OK
+## 
+## 6 yoo-bh  check column names in the igem_obs sheet
+## 
+## 7 seokjin-oh  ........... OK
+## 
+## 8 treebird19  ........... OK
+## 
+## 9 jinjulee119  ........... OK</code></pre>
+<p>#테이블 통합 최종 데이터 병합 전 엑셀파일 이름을 사용자 id를 더하여 모든 데이터에 추가 후 데이터 병합</p>
+<pre class="r"><code>library(magrittr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;magrittr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     set_names</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     extract</code></pre>
+<pre class="r"><code>## 다운로드 받은 엑셀 파일들 
+filenames &lt;- dir(path = destdir, pattern = &quot;*_partdb.xlsx&quot;)
+
+
+tmp1 &lt;- list()
+tmp2 &lt;- list()
+tmp3 &lt;- list()
+tmp4 &lt;- list()
+tmp5 &lt;- list()
+tmp6 &lt;- list()
+tmp7 &lt;- list()
+
+for(i in 1:length(filenames)) {
+  destfile &lt;- paste0(destdir, filenames[i])
+  
+  tmp &lt;- read_excel(destfile, sheet = 1, skip = 0, col_names = T)
+  tmp %&lt;&gt;% mutate(across(!where(is.character), as.character)) 
+  ## add filename
+  tmp1[[i]] &lt;- tmp %&gt;% mutate(filename=filenames[i])
+  
+  tmp &lt;- read_excel(destfile, sheet = 2, skip = 0, col_names = T)
+  tmp %&lt;&gt;% mutate(across(!where(is.character), as.character)) 
+  tmp2[[i]] &lt;- tmp %&gt;% mutate(filename=filenames[i])
+  
+  tmp &lt;- read_excel(destfile, sheet = 3, skip = 0, col_names = T)
+  tmp %&lt;&gt;% mutate(across(!where(is.character), as.character)) 
+  tmp3[[i]] &lt;- tmp %&gt;% mutate(filename=filenames[i])
+  
+  tmp &lt;- read_excel(destfile, sheet = 4, skip = 0, col_names = T) 
+  tmp %&lt;&gt;% mutate(across(!where(is.character), as.character)) 
+  tmp4[[i]] &lt;- tmp %&gt;% mutate(filename=filenames[i])
+  
+   
+  
+}
+
+igem_team &lt;- do.call(bind_rows, tmp1)
+igem_part &lt;- do.call(bind_rows, tmp2)
+igem_device &lt;- do.call(bind_rows, tmp3)
+igem_obs &lt;- do.call(bind_rows, tmp4)</code></pre>
+<p>#데이터 분석을 위한 전처리 igem_part와 igem_team 테이블 병합 id와 file name 변수 두개 동시에 사용</p>
+<pre class="r"><code>library(tidyverse)
+
+## new id 
+tmpdat &lt;- igem_part %&gt;% 
+  left_join(igem_team, by=c(&quot;team_id&quot;=&quot;id&quot;, &quot;filename&quot;=&quot;filename&quot;))
+
+tmpdat %&gt;% str</code></pre>
+<pre><code>## tibble[,13] [53 × 13] (S3: tbl_df/tbl/data.frame)
+##  $ id       : chr [1:53] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+##  $ BBid     : chr [1:53] &quot;BBa_R0011&quot; &quot;BBa_C0012&quot; &quot;BBa_B0054&quot; &quot;BBa_R0011&quot; ...
+##  $ type     : chr [1:53] &quot;Promoter&quot; &quot;GFP&quot; &quot;Terminator&quot; &quot;Promoter&quot; ...
+##  $ link     : chr [1:53] &quot;http://parts.igem.org/Part:BBa_R0011&quot; &quot;http://parts.igem.org/Part:BBa_C0012&quot; &quot;http://parts.igem.org/Part:BBa_B0054&quot; &quot;http://parts.igem.org/Part:BBa_R0011&quot; ...
+##  $ backbone : chr [1:53] &quot;pSB1C3&quot; &quot;pSB1C3&quot; &quot;pSB1C3&quot; &quot;pCDF&quot; ...
+##  $ device_id: chr [1:53] &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;2&quot; ...
+##  $ team_id  : chr [1:53] &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;2&quot; ...
+##  $ user     : chr [1:53] &quot;aputron&quot; &quot;aputron&quot; &quot;aputron&quot; &quot;aputron&quot; ...
+##  $ filename : chr [1:53] &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; ...
+##  $ team_name: chr [1:53] &quot;ZJU-China&quot; &quot;ZJU-China&quot; &quot;ZJU-China&quot; &quot;UCSF&quot; ...
+##  $ project  : chr [1:53] &quot;PaDetector, a household device for HPV preliminary screening&quot; &quot;PaDetector, a household device for HPV preliminary screening&quot; &quot;PaDetector, a household device for HPV preliminary screening&quot; &quot;OperationCRISPR&quot; ...
+##  $ year     : chr [1:53] &quot;2019&quot; &quot;2019&quot; &quot;2019&quot; &quot;2013&quot; ...
+##  $ wiki     : chr [1:53] &quot;https://2019.igem.org/Team:ZJU-China&quot; &quot;https://2019.igem.org/Team:ZJU-China&quot; &quot;https://2019.igem.org/Team:ZJU-China&quot; &quot;http://2013.igem.org/Team:UCSF&quot; ...</code></pre>
+<p>필요한 변수만 선택하는 코드 추가 필요한 변수는 분석 목적에 따라 다를 수 있음</p>
+<pre class="r"><code>tmpdat &lt;- igem_part %&gt;% 
+  full_join(igem_team, by=c(&quot;team_id&quot;=&quot;id&quot;, &quot;filename&quot;=&quot;filename&quot;)) %&gt;% 
+  select(id, BBid, type, backbone, device_id, user, filename, team_name, year) %&gt;% 
+  drop_na()
+
+tmpdat %&gt;% str</code></pre>
+<pre><code>## tibble[,9] [48 × 9] (S3: tbl_df/tbl/data.frame)
+##  $ id       : chr [1:48] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+##  $ BBid     : chr [1:48] &quot;BBa_R0011&quot; &quot;BBa_C0012&quot; &quot;BBa_B0054&quot; &quot;BBa_R0011&quot; ...
+##  $ type     : chr [1:48] &quot;Promoter&quot; &quot;GFP&quot; &quot;Terminator&quot; &quot;Promoter&quot; ...
+##  $ backbone : chr [1:48] &quot;pSB1C3&quot; &quot;pSB1C3&quot; &quot;pSB1C3&quot; &quot;pCDF&quot; ...
+##  $ device_id: chr [1:48] &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;2&quot; ...
+##  $ user     : chr [1:48] &quot;aputron&quot; &quot;aputron&quot; &quot;aputron&quot; &quot;aputron&quot; ...
+##  $ filename : chr [1:48] &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; &quot;aputron_partdb.xlsx&quot; ...
+##  $ team_name: chr [1:48] &quot;ZJU-China&quot; &quot;ZJU-China&quot; &quot;ZJU-China&quot; &quot;UCSF&quot; ...
+##  $ year     : chr [1:48] &quot;2019&quot; &quot;2019&quot; &quot;2019&quot; &quot;2013&quot; ...</code></pre>
+<p>관심있는 부품이 사용된 디바이스를 찾고 해당 디바이스 관측 데이터를 수집</p>
+<pre class="r"><code>tmpdat2 &lt;- igem_obs %&gt;% 
+  full_join(igem_device, by=c(&quot;device_id&quot;=&quot;id&quot;, &quot;filename&quot;=&quot;filename&quot;)) %&gt;% 
+  drop_na()
+
+
+tmpdat2 %&gt;%  str</code></pre>
+<pre><code>## tibble[,14] [44 × 14] (S3: tbl_df/tbl/data.frame)
+##  $ id              : chr [1:44] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+##  $ strain          : chr [1:44] &quot;E.coli&quot; &quot;E.coli&quot; &quot;E.coli&quot; &quot;E.coli&quot; ...
+##  $ indc            : chr [1:44] &quot;Arabinose&quot; &quot;Arabinose&quot; &quot;Arabinose&quot; &quot;Arabinose&quot; ...
+##  $ conc            : chr [1:44] &quot;0.02&quot; &quot;0.2&quot; &quot;2&quot; &quot;0&quot; ...
+##  $ concunit        : chr [1:44] &quot;mM&quot; &quot;mM&quot; &quot;mM&quot; &quot;mM&quot; ...
+##  $ value           : chr [1:44] &quot;3000&quot; &quot;8200&quot; &quot;8000&quot; &quot;250&quot; ...
+##  $ valunit         : chr [1:44] &quot;Fluorescence&quot; &quot;Fluorescence&quot; &quot;Fluorescence&quot; &quot;a.u.&quot; ...
+##  $ incubhr         : chr [1:44] &quot;12&quot; &quot;12&quot; &quot;12&quot; &quot;4&quot; ...
+##  $ incubtemp       : chr [1:44] &quot;NA&quot; &quot;NA&quot; &quot;NA&quot; &quot;37&quot; ...
+##  $ device_id       : chr [1:44] &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;2&quot; ...
+##  $ link            : chr [1:44] &quot;https://2020.igem.org/Team:Jilin_China/Proof_Of_Concept&quot; &quot;https://2020.igem.org/Team:Jilin_China/Proof_Of_Concept&quot; &quot;https://2020.igem.org/Team:Jilin_China/Proof_Of_Concept&quot; &quot;https://2019.igem.org/Team:BHSF_ND/Project/Leakage#ct3&quot; ...
+##  $ filename        : chr [1:44] &quot;gpemelianov_partdb.xlsx&quot; &quot;gpemelianov_partdb.xlsx&quot; &quot;gpemelianov_partdb.xlsx&quot; &quot;gpemelianov_partdb.xlsx&quot; ...
+##  $ device_name     : chr [1:44] &quot;D0001&quot; &quot;D0001&quot; &quot;D0001&quot; &quot;D0002&quot; ...
+##  $ part_combination: chr [1:44] &quot;1,2,3,4&quot; &quot;1,2,3,4&quot; &quot;1,2,3,4&quot; &quot;5,6&quot; ...</code></pre>
+<p>관심있는 part가 사용된 device와 관측값을 찾기 위한 데이터 처리 수행</p>
+<pre class="r"><code>tmpdat %&gt;% 
+  filter(BBid==&quot;BBa_R0040&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 9
+##   id    BBid    type    backbone device_id user    filename      team_name year 
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;
+## 1 10    BBa_R0… promot… PSB3C5   3         JinjuL… jinjulee119_… Fudan     2019</code></pre>
+<pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
+  filter(unlist(lapply(partcomb, function(x){5 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
+
+finaldat %&gt;% str</code></pre>
+<pre><code>## tibble[,15] [0 × 15] (S3: tbl_df/tbl/data.frame)
+##  $ id              : chr(0) 
+##  $ strain          : chr(0) 
+##  $ indc            : chr(0) 
+##  $ conc            : chr(0) 
+##  $ concunit        : chr(0) 
+##  $ value           : chr(0) 
+##  $ valunit         : chr(0) 
+##  $ incubhr         : chr(0) 
+##  $ incubtemp       : chr(0) 
+##  $ device_id       : chr(0) 
+##  $ link            : chr(0) 
+##  $ filename        : chr(0) 
+##  $ device_name     : chr(0) 
+##  $ part_combination: chr(0) 
+##  $ partcomb        : list()</code></pre>
+<pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
+  filter(unlist(lapply(partcomb, function(x){14 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
+
+finaldat %&gt;% str</code></pre>
+<pre><code>## tibble[,15] [0 × 15] (S3: tbl_df/tbl/data.frame)
+##  $ id              : chr(0) 
+##  $ strain          : chr(0) 
+##  $ indc            : chr(0) 
+##  $ conc            : chr(0) 
+##  $ concunit        : chr(0) 
+##  $ value           : chr(0) 
+##  $ valunit         : chr(0) 
+##  $ incubhr         : chr(0) 
+##  $ incubtemp       : chr(0) 
+##  $ device_id       : chr(0) 
+##  $ link            : chr(0) 
+##  $ filename        : chr(0) 
+##  $ device_name     : chr(0) 
+##  $ part_combination: chr(0) 
+##  $ partcomb        : list()</code></pre>
+<pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
+  filter(unlist(lapply(partcomb, function(x){23 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
+
+finaldat %&gt;% str</code></pre>
+<pre><code>## tibble[,15] [0 × 15] (S3: tbl_df/tbl/data.frame)
+##  $ id              : chr(0) 
+##  $ strain          : chr(0) 
+##  $ indc            : chr(0) 
+##  $ conc            : chr(0) 
+##  $ concunit        : chr(0) 
+##  $ value           : chr(0) 
+##  $ valunit         : chr(0) 
+##  $ incubhr         : chr(0) 
+##  $ incubtemp       : chr(0) 
+##  $ device_id       : chr(0) 
+##  $ link            : chr(0) 
+##  $ filename        : chr(0) 
+##  $ device_name     : chr(0) 
+##  $ part_combination: chr(0) 
+##  $ partcomb        : list()</code></pre>
+<pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
+  filter(unlist(lapply(partcomb, function(x){28 %in% x})) &amp; filename==&quot;hayleykim97_partdb.xlsx&quot;)
+
+finaldat %&gt;% str</code></pre>
+<pre><code>## tibble[,15] [0 × 15] (S3: tbl_df/tbl/data.frame)
+##  $ id              : chr(0) 
+##  $ strain          : chr(0) 
+##  $ indc            : chr(0) 
+##  $ conc            : chr(0) 
+##  $ concunit        : chr(0) 
+##  $ value           : chr(0) 
+##  $ valunit         : chr(0) 
+##  $ incubhr         : chr(0) 
+##  $ incubtemp       : chr(0) 
+##  $ device_id       : chr(0) 
+##  $ link            : chr(0) 
+##  $ filename        : chr(0) 
+##  $ device_name     : chr(0) 
+##  $ part_combination: chr(0) 
+##  $ partcomb        : list()</code></pre>
+<pre class="r"><code>finaldat &lt;-tmpdat2 %&gt;% 
+  mutate(partcomb = lapply(strsplit(tmpdat2$part_combination, split=&quot;,&quot;), as.numeric)) %&gt;% 
+  filter(unlist(lapply(partcomb, function(x){10 %in% x})) &amp; filename==&quot;jinjulee119_partdb.xlsx&quot;)
+
+finaldat %&gt;% str</code></pre>
+<pre><code>## tibble[,15] [4 × 15] (S3: tbl_df/tbl/data.frame)
+##  $ id              : chr [1:4] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot;
+##  $ strain          : chr [1:4] &quot;E. coli Nissle 1917&quot; &quot;E. coli Nissle 1917&quot; &quot;E. coli Nissle 1917&quot; &quot;E. coli Nissle 1917&quot;
+##  $ indc            : chr [1:4] &quot;tet&quot; &quot;tet&quot; &quot;tet&quot; &quot;tet&quot;
+##  $ conc            : chr [1:4] &quot;600&quot; &quot;750&quot; &quot;900&quot; &quot;1200&quot;
+##  $ concunit        : chr [1:4] &quot;ng/㎕&quot; &quot;ng/㎕&quot; &quot;ng/㎕&quot; &quot;ng/㎕&quot;
+##  $ value           : chr [1:4] &quot;350000&quot; &quot;230000&quot; &quot;180000&quot; &quot;150000&quot;
+##  $ valunit         : chr [1:4] &quot;MEFL/particle&quot; &quot;MEFL/particle&quot; &quot;MEFL/particle&quot; &quot;MEFL/particle&quot;
+##  $ incubhr         : chr [1:4] &quot;7&quot; &quot;7&quot; &quot;7&quot; &quot;7&quot;
+##  $ incubtemp       : chr [1:4] &quot;37&quot; &quot;37&quot; &quot;37&quot; &quot;37&quot;
+##  $ device_id       : chr [1:4] &quot;3&quot; &quot;3&quot; &quot;3&quot; &quot;3&quot;
+##  $ link            : chr [1:4] &quot;https://2019.igem.org/Team:Fudan/&quot; &quot;https://2019.igem.org/Team:Fudan/&quot; &quot;https://2019.igem.org/Team:Fudan/&quot; &quot;https://2019.igem.org/Team:Fudan/&quot;
+##  $ filename        : chr [1:4] &quot;jinjulee119_partdb.xlsx&quot; &quot;jinjulee119_partdb.xlsx&quot; &quot;jinjulee119_partdb.xlsx&quot; &quot;jinjulee119_partdb.xlsx&quot;
+##  $ device_name     : chr [1:4] &quot;D0003&quot; &quot;D0003&quot; &quot;D0003&quot; &quot;D0003&quot;
+##  $ part_combination: chr [1:4] &quot;10,11,12,13&quot; &quot;10,11,12,13&quot; &quot;10,11,12,13&quot; &quot;10,11,12,13&quot;
+##  $ partcomb        :List of 4
+##   ..$ : num [1:4] 10 11 12 13
+##   ..$ : num [1:4] 10 11 12 13
+##   ..$ : num [1:4] 10 11 12 13
+##   ..$ : num [1:4] 10 11 12 13</code></pre>
+<p>#그래프 그리는데 필요한 변수 추출 후 정리</p>
+<pre class="r"><code>plotdat &lt;- finaldat %&gt;% 
+  select(-c(id, link, filename, part_combination, partcomb)) %&gt;% 
+  mutate(value = as.numeric(value))
+
+plotdat %&gt;% str</code></pre>
+<pre><code>## tibble[,10] [4 × 10] (S3: tbl_df/tbl/data.frame)
+##  $ strain     : chr [1:4] &quot;E. coli Nissle 1917&quot; &quot;E. coli Nissle 1917&quot; &quot;E. coli Nissle 1917&quot; &quot;E. coli Nissle 1917&quot;
+##  $ indc       : chr [1:4] &quot;tet&quot; &quot;tet&quot; &quot;tet&quot; &quot;tet&quot;
+##  $ conc       : chr [1:4] &quot;600&quot; &quot;750&quot; &quot;900&quot; &quot;1200&quot;
+##  $ concunit   : chr [1:4] &quot;ng/㎕&quot; &quot;ng/㎕&quot; &quot;ng/㎕&quot; &quot;ng/㎕&quot;
+##  $ value      : num [1:4] 350000 230000 180000 150000
+##  $ valunit    : chr [1:4] &quot;MEFL/particle&quot; &quot;MEFL/particle&quot; &quot;MEFL/particle&quot; &quot;MEFL/particle&quot;
+##  $ incubhr    : chr [1:4] &quot;7&quot; &quot;7&quot; &quot;7&quot; &quot;7&quot;
+##  $ incubtemp  : chr [1:4] &quot;37&quot; &quot;37&quot; &quot;37&quot; &quot;37&quot;
+##  $ device_id  : chr [1:4] &quot;3&quot; &quot;3&quot; &quot;3&quot; &quot;3&quot;
+##  $ device_name: chr [1:4] &quot;D0003&quot; &quot;D0003&quot; &quot;D0003&quot; &quot;D0003&quot;</code></pre>
+<p>#bar graph를 그리는 코드 추가 균주, inducer, inducer 농도별로 평균을 계산 후 그래프 작성</p>
+<pre class="r"><code>datasummary &lt;- plotdat %&gt;% 
+  group_by(indc, conc) %&gt;% 
+  summarise(mean=mean(value), n=n()) </code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;indc&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>ggplot(datasummary, aes(x=conc, y=mean)) +
+  geom_bar(stat=&quot;identity&quot;) +
+  theme_bw()</code></pre>
+<p><img src="result_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 
 
 
